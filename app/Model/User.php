@@ -19,6 +19,10 @@ class User extends Model
         'email',
         'cpf',
         'phone',
+        'city',
+        'state',
+        'postal_code',
+        'street',
         'status',
     ];
 

@@ -11,7 +11,6 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./database/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD || exit 1"]
       interval: 5s
@@ -41,7 +40,7 @@ services:
     entrypoint:
       - sh
       - -lc
-      - rm -rf runtime/container && mkdir -p runtime/container/proxy && exec php bin/hyperf.php start
+      - rm -rf runtime/container && mkdir -p runtime/container/proxy && php bin/hyperf.php migrate --no-interaction && exec php bin/hyperf.php start
     depends_on:
       mysql:
         condition: service_healthy
