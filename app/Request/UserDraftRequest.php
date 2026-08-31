@@ -37,7 +37,7 @@ class UserDraftRequest extends FormRequest
             'cpf.cpf' => 'O campo CPF deve ser um CPF válido.',
             'cpf.unique' => 'O CPF informado já está cadastrado.',
             'email.required' => 'O campo E-mail é obrigatório.',
-            'email.email' => 'E-mail inválido.',
+            'email.email' => 'E-mail inválido. ',
             'email.unique' => 'E-mail já cadastrado.',
             'telefone.required' => 'O campo Telefone é obrigatório.',
             'telefone.regex' => 'Telefone celular inválido. O formato deve ser (XX) 9XXXX-XXXX.',
