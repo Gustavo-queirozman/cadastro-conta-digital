@@ -1,4 +1,23 @@
 services:
+  mysql:
+    container_name: cadastro-conta-digital-mysql
+    image: mysql:8.4
+    ports:
+      - 3308:3306
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
   redis:
     container_name: cadastro-conta-digital-redis
     image: redis:7-alpine
@@ -24,6 +43,8 @@ services:
       - -lc
       - rm -rf runtime/container && mkdir -p runtime/container/proxy && exec php bin/hyperf.php start
     depends_on:
+      mysql:
+        condition: service_healthy
       redis:
         condition: service_healthy
     volumes:
@@ -32,10 +53,23 @@ services:
     ports:
       - 9501:9501
     environment:
-      - APP_ENV=dev
-      - SCAN_CACHEABLE=false
-      - CONFIG_CENTER_ENABLE=false
-      - REDIS_HOST=redis
+      APP_NAME: ${APP_NAME}
+      APP_ENV: ${APP_ENV}
+      DB_DRIVER: ${DB_DRIVER}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_CHARSET: ${DB_CHARSET}
+      DB_COLLATION: ${DB_COLLATION}
+      DB_PREFIX: ${DB_PREFIX}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_AUTH: ${REDIS_AUTH}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_DB: ${REDIS_DB}
+      SCAN_CACHEABLE: "false"
+      CONFIG_CENTER_ENABLE: "false"
 
 networks:
   default:
@@ -43,3 +77,4 @@ networks:
 
 volumes:
   hyperf-runtime:
+  mysql-data:
